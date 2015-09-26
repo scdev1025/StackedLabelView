@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Stackedlabelview : This is StackView for UILabel.">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Stackedlabelview</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/kenneth1025/StackedLabelView">View on GitHub</a>
+
+          <h1 id="project_title">Stackedlabelview</h1>
+          <h2 id="project_tagline">This is StackView for UILabel.</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/kenneth1025/StackedLabelView/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/kenneth1025/StackedLabelView/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a id="stackedlabelview" class="anchor" href="#stackedlabelview" aria-hidden="true"><span class="octicon octicon-link"></span></a>StackedLabelView</h1>
+
+<p>This is StackView for UILabel.</p>
+
+<p><img src="https://github.com/kenneth1025/StackedLabelView/blob/master/StackedLabelView/screenshots/iOS%20Simulator%20Screen%20Shot%20Sep%2026%2C%202015%2C%203.45.21%20PM.png" alt="First Image"><img src="https://github.com/kenneth1025/StackedLabelView/blob/master/StackedLabelView/screenshots/iOS%20Simulator%20Screen%20Shot%20Sep%2026%2C%202015%2C%203.45.11%20PM.png" alt="Second Image"><img src="https://github.com/kenneth1025/StackedLabelView/blob/master/StackedLabelView/screenshots/iOS%20Simulator%20Screen%20Shot%20Sep%2026%2C%202015%2C%203.45.18%20PM.png" alt="Third Image"><img src="https://github.com/kenneth1025/StackedLabelView/blob/master/StackedLabelView/screenshots/iOS%20Simulator%20Screen%20Shot%20Sep%2026%2C%202015%2C%203.45.13%20PM.png" alt="Fourth Image"></p>
+
+<h2>
+<a id="how-to-use" class="anchor" href="#how-to-use" aria-hidden="true"><span class="octicon octicon-link"></span></a>How to use</h2>
+
+<pre><code>NSArray *stringArray = @[@"first", @"second", @"third"];
+NSArray *colorArray = @[[UIColor whiteColor],
+                               [UIColor yellowColor],
+                               [UIColor blueColor]];
+stackedView.wordsInScrollView = stringArray;
+stackedView.backgroundColorsOfWords = colorArray;
+stackedView.fontUsedForDisplay = [UIFont systemFontOfSize:30];
+stackedView.horizontalSpace = 10;
+[stackedView reloadData];
+</code></pre>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Stackedlabelview maintained by <a href="https://github.com/kenneth1025">kenneth1025</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
