@@ -31,10 +31,7 @@
 
 - (IBAction)segmentChanged:(UISegmentedControl*)sender {
     NSMutableArray *stringArray = [NSMutableArray array];
-    NSMutableArray *colorArray = @[[UIColor whiteColor],
-                                   [UIColor yellowColor],
-                                   [UIColor blueColor]];
-    
+    NSMutableArray *colorArray = [NSMutableArray array];    
     [NSMutableArray array];
     
     switch (sender.selectedSegmentIndex) {

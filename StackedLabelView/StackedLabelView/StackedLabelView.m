@@ -3,7 +3,7 @@
 //  CustomScrollView
 //
 //  Created by ken on 9/25/15.
-//  Copyright (c) 2015 ken. All rights reserved.
+//  Copyright (c) 2015 user. All rights reserved.
 //
 
 #import "StackedLabelView.h"
@@ -92,9 +92,9 @@ typedef NS_ENUM(int, ScrollState) {
     //hide labelScrollView;
     [labelScrollView setShowsHorizontalScrollIndicator:false];
     [labelScrollView addObserver:self
-                    forKeyPath:@"contentOffset"
-                       options:NSKeyValueObservingOptionOld
-                       context:nil];
+                      forKeyPath:@"contentOffset"
+                         options:NSKeyValueObservingOptionOld
+                         context:nil];
 }
 
 - (void)layoutSubviews{
@@ -103,7 +103,7 @@ typedef NS_ENUM(int, ScrollState) {
 
 - (void) dealloc {
     [labelScrollView removeObserver:self
-                    forKeyPath:@"contentOffset"];
+                         forKeyPath:@"contentOffset"];
 }
 
 #pragma mark stacked label functions
@@ -112,12 +112,13 @@ typedef NS_ENUM(int, ScrollState) {
 {
     _currentIndex = 0;
     [self buildSubViewsForScrolling];
+    
     CAKeyframeAnimation * anim = [ CAKeyframeAnimation animationWithKeyPath:@"transform" ] ;
     anim.values = @[ [ NSValue valueWithCATransform3D:CATransform3DMakeTranslation(-5.0f, 0.0f, 0.0f) ], [ NSValue valueWithCATransform3D:CATransform3DMakeTranslation(5.0f, 0.0f, 0.0f) ] ] ;
     anim.autoreverses = YES ;
     anim.repeatCount = 2.0f ;
-    anim.duration = 0.07f ;    
-    [self.layer addAnimation:anim forKey:nil ] ;
+    anim.duration = 0.07f ;
+    [labelScrollView.layer addAnimation:anim forKey:nil ];
 }
 
 - (NSInteger) currentIndex {
@@ -293,20 +294,20 @@ typedef NS_ENUM(int, ScrollState) {
                         change:(NSDictionary *)change
                        context:(void *)context
 {
-//    if ([keyPath isEqualToString:@"contentOffset"] && object == labelScrollView) {
-//        CGPoint oldOffset = [(NSValue *)change[NSKeyValueChangeOldKey] CGPointValue];
-//        
-//        if (labelScrollView.contentOffset.x == oldOffset.x && oldOffset.x != 0 && !labelScrollView.isDragging) {
-//            if ((NSInteger)(labelScrollView.contentOffset.x - labelScrollView.contentInset.right) == 0 && _currentIndex < self.wordsInScrollView.count - 1) {
-//                _currentIndex++;
-//                [self buildSubViewsForScrolling];
-//            }else if ((NSInteger)(labelScrollView.contentOffset.x + labelScrollView.contentInset.left) == 0 && _currentIndex > 0){
-//                _currentIndex--;
-//                [self buildSubViewsForScrolling];
-//            }
-//
-//        }
-//            return;
-//    }
+    //    if ([keyPath isEqualToString:@"contentOffset"] && object == labelScrollView) {
+    //        CGPoint oldOffset = [(NSValue *)change[NSKeyValueChangeOldKey] CGPointValue];
+    //
+    //        if (labelScrollView.contentOffset.x == oldOffset.x && oldOffset.x != 0 && !labelScrollView.isDragging) {
+    //            if ((NSInteger)(labelScrollView.contentOffset.x - labelScrollView.contentInset.right) == 0 && _currentIndex < self.wordsInScrollView.count - 1) {
+    //                _currentIndex++;
+    //                [self buildSubViewsForScrolling];
+    //            }else if ((NSInteger)(labelScrollView.contentOffset.x + labelScrollView.contentInset.left) == 0 && _currentIndex > 0){
+    //                _currentIndex--;
+    //                [self buildSubViewsForScrolling];
+    //            }
+    //
+    //        }
+    //            return;
+    //    }
 }
 @end
