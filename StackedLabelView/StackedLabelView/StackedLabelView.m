@@ -21,10 +21,10 @@ typedef NS_ENUM(int, ScrollState) {
     NSInteger _currentIndex;
     ScrollState scrollState;
     
-    UILabel *previousLabel;
-    UILabel *currentLabel;
-    UILabel *currentFlowLabel;
-    UILabel *nextLabel;
+    StackedGapLabel *previousLabel;
+    StackedGapLabel *currentLabel;
+    StackedGapLabel *currentFlowLabel;
+    StackedGapLabel *nextLabel;
 }
 
 @end
@@ -69,9 +69,9 @@ typedef NS_ENUM(int, ScrollState) {
     
     //add previous, static current label
     
-    previousLabel = [[UILabel alloc] init];
+    previousLabel = [[StackedGapLabel alloc] init];
     previousLabel.hidden = true;
-    currentLabel = [[UILabel alloc] init];
+    currentLabel = [[StackedGapLabel alloc] init];
     currentLabel.hidden = true;
     [maskView addSubview:previousLabel];
     [maskView addSubview:currentLabel];
@@ -84,8 +84,8 @@ typedef NS_ENUM(int, ScrollState) {
     [maskView addSubview:labelScrollView];
     
     // add movable current label and next label
-    currentFlowLabel = [[UILabel alloc] init];
-    nextLabel = [[UILabel alloc] init];
+    currentFlowLabel = [[StackedGapLabel alloc] init];
+    nextLabel = [[StackedGapLabel alloc] init];
     currentFlowLabel.hidden = true;
     nextLabel.hidden = true;
     [labelScrollView addSubview:currentFlowLabel];
@@ -218,7 +218,7 @@ typedef NS_ENUM(int, ScrollState) {
     return [UIColor darkTextColor];
 }
 
-- (void) setLabel:(UILabel*) label withString:(NSString*) string andBackgroundColor:(UIColor*) color withTextColor:(UIColor*) textColor
+- (void) setLabel:(StackedGapLabel*) label withString:(NSString*) string andBackgroundColor:(UIColor*) color withTextColor:(UIColor*) textColor
 {
     UIFont *font = (self.fontUsedForDisplay?self.fontUsedForDisplay:[UIFont systemFontOfSize:20]);
     label.text = string;
@@ -237,7 +237,12 @@ typedef NS_ENUM(int, ScrollState) {
     CGSize size = [string sizeWithAttributes:@{NSFontAttributeName:font}];
     [label setTextAlignment:NSTextAlignmentCenter];
     CGFloat width = size.width + self.horizontalSpace * 2;
-    width = MIN(width, self.bounds.size.width);
+    if (width > self.bounds.size.width) {
+        width = self.bounds.size.width;
+        [label setLabelGap:UIEdgeInsetsMake(0, self.horizontalSpace, 0, 0)];
+    }else{
+        [label setLabelGap:UIEdgeInsetsMake(0, self.horizontalSpace, 0, self.horizontalSpace)];
+    }
     [label setFrame:CGRectMake(0, 0, width, self.bounds.size.height)];
     return;
 }
@@ -340,4 +345,13 @@ typedef NS_ENUM(int, ScrollState) {
     
     [scrollView setPagingEnabled:true];
 }
+@end
+
+@implementation StackedGapLabel
+
+- (void)drawTextInRect:(CGRect)rect
+{
+    [super drawTextInRect:UIEdgeInsetsInsetRect(rect, self.labelGap)];
+}
+
 @end

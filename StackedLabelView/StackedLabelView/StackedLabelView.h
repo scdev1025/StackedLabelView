@@ -32,3 +32,9 @@
 - (void) stackedLabel:(StackedLabelView*)stackedLabel changedWithLabel:(NSString*) changedString;
 
 @end
+
+@interface StackedGapLabel : UILabel
+
+@property (nonatomic, assign) UIEdgeInsets labelGap;
+
+@end
