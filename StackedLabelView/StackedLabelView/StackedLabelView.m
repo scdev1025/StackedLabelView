@@ -63,6 +63,8 @@ typedef NS_ENUM(int, ScrollState) {
     // Create maskview;
     maskView = [[UIView alloc] initWithFrame:self.bounds];
     maskView.clipsToBounds = true;
+    maskView.layer.cornerRadius = 4;
+    maskView.layer.masksToBounds = YES;
     [self addSubview:maskView];
     
     //add previous, static current label
@@ -91,10 +93,13 @@ typedef NS_ENUM(int, ScrollState) {
     
     //hide labelScrollView;
     [labelScrollView setShowsHorizontalScrollIndicator:false];
-    [labelScrollView addObserver:self
-                      forKeyPath:@"contentOffset"
-                         options:NSKeyValueObservingOptionOld
-                         context:nil];
+   
+    previousLabel.textColor = [self textColorAtIndex:_currentIndex - 1];//[UIColor whiteColor];
+    currentFlowLabel.textColor = [self textColorAtIndex:_currentIndex];//[UIColor whiteColor];
+    currentFlowLabel.textColor = [self textColorAtIndex:_currentIndex];//[UIColor whiteColor];
+    nextLabel.textColor = [self textColorAtIndex:_currentIndex + 1];//[UIColor whiteColor];
+
+    
 }
 
 - (void)layoutSubviews{
@@ -103,7 +108,7 @@ typedef NS_ENUM(int, ScrollState) {
 
 - (void) dealloc {
     [labelScrollView removeObserver:self
-                         forKeyPath:@"contentOffset"];
+                    forKeyPath:@"contentOffset"];
 }
 
 #pragma mark stacked label functions
@@ -114,10 +119,13 @@ typedef NS_ENUM(int, ScrollState) {
     [self buildSubViewsForScrolling];
     
     CAKeyframeAnimation * anim = [ CAKeyframeAnimation animationWithKeyPath:@"transform" ] ;
-    anim.values = @[ [ NSValue valueWithCATransform3D:CATransform3DMakeTranslation(-5.0f, 0.0f, 0.0f) ], [ NSValue valueWithCATransform3D:CATransform3DMakeTranslation(5.0f, 0.0f, 0.0f) ] ] ;
-    anim.autoreverses = YES ;
-    anim.repeatCount = 2.0f ;
-    anim.duration = 0.07f ;
+    anim.values = @[ [ NSValue valueWithCATransform3D:CATransform3DMakeTranslation(16.0f, 0.0f, 0.0f) ],
+                     [ NSValue valueWithCATransform3D:CATransform3DMakeTranslation(-16.0f, 0.0f, 0.0f) ],
+                     [ NSValue valueWithCATransform3D:CATransform3DMakeTranslation(0.0f, 0.0f, 0.0f) ],
+                     ] ;
+    anim.autoreverses = NO ;
+    anim.repeatCount = 0.0f ;
+    anim.duration = 0.40f ;
     [labelScrollView.layer addAnimation:anim forKey:nil ];
 }
 
@@ -139,9 +147,9 @@ typedef NS_ENUM(int, ScrollState) {
     CGSize contentSize = CGSizeZero;
     
     
-    // currentlabel
-    [self setLabel:currentLabel withString:[self stringAtIndex:_currentIndex] andBackgroundColor:[self backgroundColorAtIndex:_currentIndex]];
-    [self setLabel:currentFlowLabel withString:[self stringAtIndex:_currentIndex] andBackgroundColor:[self backgroundColorAtIndex:_currentIndex]];
+    // currentlabel //this sets the colors and strings
+    [self setLabel:currentLabel withString:[self stringAtIndex:_currentIndex] andBackgroundColor:[self backgroundColorAtIndex:_currentIndex] withTextColor:[self textColorAtIndex:_currentIndex]];
+    [self setLabel:currentFlowLabel withString:[self stringAtIndex:_currentIndex] andBackgroundColor:[self backgroundColorAtIndex:_currentIndex] withTextColor:[self textColorAtIndex:_currentIndex]];
     currentFlowLabel.hidden = false;
     
     // previousLabel
@@ -149,13 +157,13 @@ typedef NS_ENUM(int, ScrollState) {
         previousLabel.text = @"";
         previousLabel.backgroundColor = [UIColor clearColor];
     }else{
-        [self setLabel:previousLabel withString:[self stringAtIndex:_currentIndex - 1] andBackgroundColor:[self backgroundColorAtIndex:_currentIndex - 1]];
+        [self setLabel:previousLabel withString:[self stringAtIndex:_currentIndex - 1] andBackgroundColor:[self backgroundColorAtIndex:_currentIndex - 1] withTextColor:[self textColorAtIndex:_currentIndex - 1]];
         edgeInsets.left = previousLabel.bounds.size.width;
         contentSize.width = previousLabel.bounds.size.width;
     }
     
     if (_currentIndex < self.wordsInScrollView.count - 1) {
-        [self setLabel:nextLabel withString:[self stringAtIndex:_currentIndex + 1] andBackgroundColor:[self backgroundColorAtIndex:_currentIndex + 1]];
+        [self setLabel:nextLabel withString:[self stringAtIndex:_currentIndex + 1] andBackgroundColor:[self backgroundColorAtIndex:_currentIndex + 1] withTextColor:[self textColorAtIndex:_currentIndex + 1]];
         if (contentSize.width < currentFlowLabel.bounds.size.width) {
             contentSize.width = currentFlowLabel.bounds.size.width;
             edgeInsets.right = currentFlowLabel.bounds.size.width;
@@ -178,6 +186,11 @@ typedef NS_ENUM(int, ScrollState) {
     
     //set mask size
     maskView.frame = CGRectMake(0, 0, currentLabel.bounds.size.width - 1, self.frame.size.height);
+    
+    previousLabel.textColor = [self textColorAtIndex:_currentIndex - 1];//[UIColor whiteColor];
+    currentFlowLabel.textColor = [self textColorAtIndex:_currentIndex];//[UIColor whiteColor];
+    currentFlowLabel.textColor = [self textColorAtIndex:_currentIndex];//[UIColor whiteColor];
+    nextLabel.textColor = [self textColorAtIndex:_currentIndex + 1];//[UIColor whiteColor];
 }
 
 - (NSString*) stringAtIndex:(NSInteger) index
@@ -197,7 +210,15 @@ typedef NS_ENUM(int, ScrollState) {
     return [UIColor whiteColor];
 }
 
-- (void) setLabel:(UILabel*) label withString:(NSString*) string andBackgroundColor:(UIColor*) color
+- (UIColor*) textColorAtIndex:(NSInteger) index
+{
+    if (index >= 0 && index < self.colorOfWords.count) {
+        return self.colorOfWords[index];
+    }
+    return [UIColor darkTextColor];
+}
+
+- (void) setLabel:(UILabel*) label withString:(NSString*) string andBackgroundColor:(UIColor*) color withTextColor:(UIColor*) textColor
 {
     UIFont *font = (self.fontUsedForDisplay?self.fontUsedForDisplay:[UIFont systemFontOfSize:20]);
     label.text = string;
@@ -206,10 +227,18 @@ typedef NS_ENUM(int, ScrollState) {
     }else{
         label.backgroundColor = [UIColor whiteColor];
     }
+    if (textColor) {
+        label.textColor = textColor;
+    }else{
+        label.textColor = [UIColor darkTextColor];
+    }
     [label setFont:font];
+    [label setLineBreakMode:NSLineBreakByClipping];
     CGSize size = [string sizeWithAttributes:@{NSFontAttributeName:font}];
     [label setTextAlignment:NSTextAlignmentCenter];
-    [label setFrame:CGRectMake(0, 0, size.width + self.horizontalSpace * 2, self.bounds.size.height)];
+    CGFloat width = size.width + self.horizontalSpace * 2;
+    width = MIN(width, self.bounds.size.width);
+    [label setFrame:CGRectMake(0, 0, width, self.bounds.size.height)];
     return;
 }
 
@@ -244,6 +273,11 @@ typedef NS_ENUM(int, ScrollState) {
                     MIN(currentLabel.frame.size.width, previousLabel.frame.size.width));
         maskView.frame = CGRectMake(0, 0, width, self.frame.size.height);
     }
+    
+    previousLabel.textColor = [self textColorAtIndex:_currentIndex - 1];//[UIColor whiteColor];
+    currentFlowLabel.textColor = [self textColorAtIndex:_currentIndex];//[UIColor whiteColor];
+    currentFlowLabel.textColor = [self textColorAtIndex:_currentIndex];//[UIColor whiteColor];
+    nextLabel.textColor = [self textColorAtIndex:_currentIndex + 1];//[UIColor whiteColor];
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
@@ -263,12 +297,24 @@ typedef NS_ENUM(int, ScrollState) {
         if (scrollView.contentOffset.x > 0) {
             _currentIndex++;
             [self buildSubViewsForScrolling];
+            if (self.delegate) {
+                [self.delegate stackedLabel:self changedWithLabel:[self stringAtIndex:_currentIndex]];
+            }
         }else if (scrollView.contentOffset.x < 0){
             _currentIndex--;
             [self buildSubViewsForScrolling];
+            if (self.delegate) {
+                [self.delegate stackedLabel:self changedWithLabel:[self stringAtIndex:_currentIndex]];
+            }
         }
         [scrollView setPagingEnabled:true];
     }
+    
+    previousLabel.textColor = [self textColorAtIndex:_currentIndex - 1];//[UIColor whiteColor];
+    currentFlowLabel.textColor = [self textColorAtIndex:_currentIndex];//[UIColor whiteColor];
+    currentFlowLabel.textColor = [self textColorAtIndex:_currentIndex];//[UIColor whiteColor];
+    nextLabel.textColor = [self textColorAtIndex:_currentIndex + 1];//[UIColor whiteColor];
+
 }
 
 - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
@@ -281,33 +327,17 @@ typedef NS_ENUM(int, ScrollState) {
     if (scrollView.contentOffset.x > 0 && _currentIndex < self.wordsInScrollView.count - 1) {
         _currentIndex++;
         [self buildSubViewsForScrolling];
+        if (self.delegate) {
+            [self.delegate stackedLabel:self changedWithLabel:[self stringAtIndex:_currentIndex]];
+        }
     }else if (scrollView.contentOffset.x < 0 && _currentIndex >= 0){
         _currentIndex--;
         [self buildSubViewsForScrolling];
+        if (self.delegate) {
+            [self.delegate stackedLabel:self changedWithLabel:[self stringAtIndex:_currentIndex]];
+        }
     }
     
     [scrollView setPagingEnabled:true];
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath
-                      ofObject:(id)object
-                        change:(NSDictionary *)change
-                       context:(void *)context
-{
-    //    if ([keyPath isEqualToString:@"contentOffset"] && object == labelScrollView) {
-    //        CGPoint oldOffset = [(NSValue *)change[NSKeyValueChangeOldKey] CGPointValue];
-    //
-    //        if (labelScrollView.contentOffset.x == oldOffset.x && oldOffset.x != 0 && !labelScrollView.isDragging) {
-    //            if ((NSInteger)(labelScrollView.contentOffset.x - labelScrollView.contentInset.right) == 0 && _currentIndex < self.wordsInScrollView.count - 1) {
-    //                _currentIndex++;
-    //                [self buildSubViewsForScrolling];
-    //            }else if ((NSInteger)(labelScrollView.contentOffset.x + labelScrollView.contentInset.left) == 0 && _currentIndex > 0){
-    //                _currentIndex--;
-    //                [self buildSubViewsForScrolling];
-    //            }
-    //
-    //        }
-    //            return;
-    //    }
 }
 @end
