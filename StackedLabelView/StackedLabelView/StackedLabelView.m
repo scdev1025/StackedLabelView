@@ -80,6 +80,7 @@ typedef NS_ENUM(int, ScrollState) {
     labelScrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
     [labelScrollView setPagingEnabled:YES];
     [labelScrollView setClipsToBounds:false];
+    
     labelScrollView.delegate = self;
     [maskView addSubview:labelScrollView];
     
@@ -94,12 +95,13 @@ typedef NS_ENUM(int, ScrollState) {
     //hide labelScrollView;
     [labelScrollView setShowsHorizontalScrollIndicator:false];
    
-    previousLabel.textColor = [self textColorAtIndex:_currentIndex - 1];//[UIColor whiteColor];
-    currentFlowLabel.textColor = [self textColorAtIndex:_currentIndex];//[UIColor whiteColor];
-    currentFlowLabel.textColor = [self textColorAtIndex:_currentIndex];//[UIColor whiteColor];
-    nextLabel.textColor = [self textColorAtIndex:_currentIndex + 1];//[UIColor whiteColor];
+    previousLabel.textColor = [self textColorAtIndex:_currentIndex - 1];
+    currentFlowLabel.textColor = [self textColorAtIndex:_currentIndex];
+    currentFlowLabel.textColor = [self textColorAtIndex:_currentIndex];
+    nextLabel.textColor = [self textColorAtIndex:_currentIndex + 1];
 
-    
+    [labelScrollView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:nil];
+    [labelScrollView addObserver:self forKeyPath:@"contentSize" options:NSKeyValueObservingOptionNew context:nil];
 }
 
 - (void)layoutSubviews{
@@ -107,8 +109,12 @@ typedef NS_ENUM(int, ScrollState) {
 }
 
 - (void) dealloc {
-    [labelScrollView removeObserver:self
-                    forKeyPath:@"contentOffset"];
+    
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
+{
+//    NSLog(@"%f %f %f %f", labelScrollView.contentOffset.x, labelScrollView.contentSize.width, labelScrollView.contentInset.left, labelScrollView.contentInset.right);
 }
 
 #pragma mark stacked label functions
@@ -134,6 +140,13 @@ typedef NS_ENUM(int, ScrollState) {
 }
 
 - (void) buildSubViewsForScrolling{
+    static NSInteger index = -1;
+    
+    if (index == _currentIndex || [labelScrollView.layer animationForKey: @"bounds"] != nil) {
+        return;
+    }
+    index = _currentIndex;
+    NSLog(@"rebuild index: %ld", (long)_currentIndex);
     
     if (self.wordsInScrollView == nil || self.wordsInScrollView.count == 0 ) {
         previousLabel.hidden = true;
@@ -298,6 +311,7 @@ typedef NS_ENUM(int, ScrollState) {
             [scrollView setContentOffset:CGPointMake(scrollView.contentInset.right, 0) animated:YES];
             maskView.frame = CGRectMake(0, 0, scrollView.contentInset.right, self.frame.size.height);
         }
+        labelScrollView.userInteractionEnabled = false;
     }else{
         if (scrollView.contentOffset.x > 0) {
             _currentIndex++;
@@ -322,20 +336,16 @@ typedef NS_ENUM(int, ScrollState) {
 
 }
 
-- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
-{
-    [self buildSubViewsForScrolling];
-}
-
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
+    labelScrollView.userInteractionEnabled = true;
     if (scrollView.contentOffset.x > 0 && _currentIndex < self.wordsInScrollView.count - 1) {
         _currentIndex++;
         [self buildSubViewsForScrolling];
         if (self.delegate) {
             [self.delegate stackedLabel:self changedWithLabel:[self stringAtIndex:_currentIndex]];
         }
-    }else if (scrollView.contentOffset.x < 0 && _currentIndex >= 0){
+    }else if (scrollView.contentOffset.x < 0 && _currentIndex > 0){
         _currentIndex--;
         [self buildSubViewsForScrolling];
         if (self.delegate) {

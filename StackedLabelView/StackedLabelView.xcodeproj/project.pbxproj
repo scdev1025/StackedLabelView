@@ -274,10 +274,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Zhang Dahai (6T5C32Q5V8)";
 				INFOPLIST_FILE = StackedLabelView/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = StackedLabelView;
+				PROVISIONING_PROFILE = "54596197-4c06-4909-834a-7a76632b254f";
 			};
 			name = Debug;
 		};
@@ -285,10 +287,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Zhang Dahai (6T5C32Q5V8)";
 				INFOPLIST_FILE = StackedLabelView/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = StackedLabelView;
+				PROVISIONING_PROFILE = "54596197-4c06-4909-834a-7a76632b254f";
 			};
 			name = Release;
 		};

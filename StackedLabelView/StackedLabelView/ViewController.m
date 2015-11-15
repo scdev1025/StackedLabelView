@@ -82,7 +82,7 @@
 
 - (void)stackedLabel:(StackedLabelView *)stackedLabel changedWithLabel:(NSString *)changedString
 {
-    NSLog(@"Label changed with %@", changedString);
+//    NSLog(@"Label changed with %@", changedString);
 }
 
 @end
